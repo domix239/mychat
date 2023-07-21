@@ -1,0 +1,5 @@
+package databaseSchemes
+
+func write() {
+
+}

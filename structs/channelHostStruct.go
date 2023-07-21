@@ -1,7 +1,8 @@
 package structs
 
 type ChannelHost struct {
-	Connection string
-	SessionID  string
-	Alive      bool
+	Id        int
+	URI       string
+	SessionID string
+	Alive     bool
 }
