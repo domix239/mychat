@@ -52,3 +52,46 @@ func DeleteBySessionId(sessionId string) {
 		fmt.Printf("Could not delete session. Session-ID <%s> not found.", sessionId)
 	}
 }
+
+func UpdateSession(sessionId string, guestUri string) {
+	session := GetBySessionId(sessionId)
+	if session != nil {
+		transaction := dbConn.Txn(true)
+		session.Guest = guestUri
+		if err := transaction.Insert("channelHost", session); err != nil {
+			panic(err)
+		}
+		transaction.Commit()
+	}
+}
+
+func GetAllEntries() {
+	transaction := dbConn.Txn(false)
+	defer transaction.Abort()
+
+	it, err := transaction.Get("channelHost", "id")
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Println("All the people:")
+	for obj := it.Next(); obj != nil; obj = it.Next() {
+		p := obj.(*structs.ChannelHost)
+		fmt.Printf("  %s\n", p)
+	}
+}
+
+func Count() int {
+	transaction := dbConn.Txn(false)
+	defer transaction.Abort()
+
+	it, err := transaction.Get("channelHost", "id")
+	if err != nil {
+		panic(err)
+	}
+	var count = 0
+	for obj := it.Next(); obj != nil; obj = it.Next() {
+		count++
+	}
+	return count
+}

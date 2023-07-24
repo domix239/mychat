@@ -27,8 +27,8 @@ Trigger new session id generation
 */
 func registerSession(w http.ResponseWriter, r *http.Request) {
 	var sessionId = createSessionId()
-	fmt.Printf("SessionID: %s", sessionId)
-	userInfo := &structs.ChannelHost{Id: 1, URI: r.RemoteAddr, SessionID: sessionId, Alive: true, Guest: nil}
+	fmt.Printf("SessionID: %s\n", sessionId)
+	userInfo := &structs.ChannelHost{Id: DB.Count(), URI: r.RemoteAddr, SessionID: sessionId, Alive: true, Guest: nil}
 	DB.Write(userInfo)
 	w.Header().Set("session-Id", sessionId)
 	w.WriteHeader(http.StatusOK)
@@ -39,7 +39,7 @@ Check if session id existent and connect to channel host
 */
 func joinSession(w http.ResponseWriter, r *http.Request) {
 	var sessionId = r.URL.Query().Get("sessionId")
-	DB.GetBySessionId(sessionId)
+	DB.UpdateSession(sessionId, r.RemoteAddr)
 	print(sessionId)
 }
 
@@ -57,9 +57,14 @@ func setupDatabase() {
 	fmt.Println("Database successfully initialized")
 }
 
+func logAll(w http.ResponseWriter, r *http.Request) {
+	DB.GetAllEntries()
+}
+
 func setupRoutes() {
 	fmt.Println("Setting routes")
 	http.HandleFunc("/register", registerSession)
 	http.HandleFunc("/join", joinSession)
 	http.HandleFunc("/terminate", terminateSession)
+	http.HandleFunc("/log", logAll)
 }
