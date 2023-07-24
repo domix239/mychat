@@ -2,9 +2,6 @@ package databaseSchemes
 
 import "github.com/hashicorp/go-memdb"
 
-var channelHostDb *memdb.MemDB
-
-// InitDatabaseScheme asd
 func InitDatabaseScheme() (dbConn *memdb.MemDB) {
 	schema := &memdb.DBSchema{
 		Tables: map[string]*memdb.TableSchema{
@@ -24,7 +21,7 @@ func InitDatabaseScheme() (dbConn *memdb.MemDB) {
 					"sessionId": &memdb.IndexSchema{
 						Name:    "sessionId",
 						Unique:  true,
-						Indexer: &memdb.StringFieldIndex{Field: "SessionId"},
+						Indexer: &memdb.StringFieldIndex{Field: "SessionID"},
 					},
 					"alive": &memdb.IndexSchema{
 						Name:    "alive",

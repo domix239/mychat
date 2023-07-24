@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	DB "websocketServer/databaseSchemes"
+	"websocketServer/structs"
 )
 
 var dbConn *memdb.MemDB
@@ -26,7 +27,11 @@ Trigger new session id generation
 */
 func registerSession(w http.ResponseWriter, r *http.Request) {
 	var sessionId = createSessionId()
-	fmt.Fprintf(w, "Session ID returned: "+sessionId)
+	fmt.Printf("SessionID: %s", sessionId)
+	userInfo := &structs.ChannelHost{Id: 1, URI: r.RemoteAddr, SessionID: sessionId, Alive: true}
+	DB.Write(userInfo)
+	w.Header().Set("session-Id", sessionId)
+	w.WriteHeader(http.StatusOK)
 }
 
 /*
@@ -40,11 +45,13 @@ func joinSession(w http.ResponseWriter, r *http.Request) {
 Terminate session and clear session id
 */
 func terminateSession(w http.ResponseWriter, r *http.Request) {
-
+	var sessionId = r.URL.Query().Get("sessionId")
+	DB.DeleteBySessionId(sessionId)
 }
 
 func setupDatabase() {
 	dbConn = DB.InitDatabaseScheme()
+	DB.SetDbConn(dbConn)
 	fmt.Println("Database successfully initialized")
 }
 
