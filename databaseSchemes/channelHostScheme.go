@@ -28,6 +28,11 @@ func InitDatabaseScheme() (dbConn *memdb.MemDB) {
 						Unique:  false,
 						Indexer: &memdb.BoolFieldIndex{Field: "Alive"},
 					},
+					"guest": &memdb.IndexSchema{
+						Name:    "guest",
+						Unique:  false,
+						Indexer: &memdb.StringFieldIndex{Field: "Guest"},
+					},
 				},
 			},
 		},

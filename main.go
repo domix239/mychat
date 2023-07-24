@@ -28,7 +28,7 @@ Trigger new session id generation
 func registerSession(w http.ResponseWriter, r *http.Request) {
 	var sessionId = createSessionId()
 	fmt.Printf("SessionID: %s", sessionId)
-	userInfo := &structs.ChannelHost{Id: 1, URI: r.RemoteAddr, SessionID: sessionId, Alive: true}
+	userInfo := &structs.ChannelHost{Id: 1, URI: r.RemoteAddr, SessionID: sessionId, Alive: true, Guest: nil}
 	DB.Write(userInfo)
 	w.Header().Set("session-Id", sessionId)
 	w.WriteHeader(http.StatusOK)
@@ -38,7 +38,9 @@ func registerSession(w http.ResponseWriter, r *http.Request) {
 Check if session id existent and connect to channel host
 */
 func joinSession(w http.ResponseWriter, r *http.Request) {
-
+	var sessionId = r.URL.Query().Get("sessionId")
+	DB.GetBySessionId(sessionId)
+	print(sessionId)
 }
 
 /*

@@ -28,7 +28,7 @@ func Delete(sessionInfo *structs.ChannelHost) {
 	transaction.Commit()
 }
 
-func DeleteBySessionId(sessionId string) {
+func GetBySessionId(sessionId string) *structs.ChannelHost {
 	transaction := dbConn.Txn(false)
 	defer transaction.Abort()
 
@@ -37,9 +37,18 @@ func DeleteBySessionId(sessionId string) {
 		panic(err)
 	}
 	if sessionInfo != nil {
-		Delete(sessionInfo.(*structs.ChannelHost))
+		return sessionInfo.(*structs.ChannelHost)
 	} else {
-		fmt.Printf("Could not delete session. Session-ID %s not found.", sessionInfo)
+		return nil
 	}
+}
 
+func DeleteBySessionId(sessionId string) {
+	sessionInfo := GetBySessionId(sessionId)
+
+	if sessionInfo != nil {
+		Delete(sessionInfo)
+	} else {
+		fmt.Printf("Could not delete session. Session-ID <%s> not found.", sessionId)
+	}
 }

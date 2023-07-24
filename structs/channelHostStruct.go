@@ -5,4 +5,5 @@ type ChannelHost struct {
 	URI       string
 	SessionID string
 	Alive     bool
+	Guest     any
 }
